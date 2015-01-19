@@ -338,6 +338,18 @@
     xmp_stop_module(class_context);
 }
 
+-(void)setChannelVolume:(int)ourChannel volume:(int)ourVolume
+{
+    int status;
+    status = xmp_channel_vol(class_context, ourChannel, ourVolume);
+}
+
+-(void)setMasterVolume:(float)volume
+{
+    AudioUnitSetParameter(mixerUnit, kMultiChannelMixerParam_Volume,
+                          kAudioUnitScope_Output, 0, volume, 0);
+}
+
 -(BOOL)isPlaying
 {
     if(xmp_get_player(class_context, XMP_PLAYER_STATE) == XMP_STATE_PLAYING)

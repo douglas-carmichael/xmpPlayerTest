@@ -51,6 +51,8 @@
 -(void)playModule:(NSError **)error;
 -(void)pauseResume;
 -(void)stopPlayback;
+-(void)setMasterVolume:(float)volume;
+-(void)setChannelVolume:(int)ourChannel volume:(int)ourVolume;
 -(BOOL)isPlaying;
 -(BOOL)isLoaded;
 
