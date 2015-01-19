@@ -158,7 +158,6 @@
     {
         xmp_release_module(class_context);
     }
-    NSLog(@"Releasing context.");
     xmp_free_context(class_context);
     
     // Clean up our buffer
