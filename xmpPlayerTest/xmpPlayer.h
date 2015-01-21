@@ -38,7 +38,7 @@
     
 @public
     // Set up some integers for position/pattern/row/bpm
-    int position, pattern, row, bpm;
+    int position, pattern, row, bpm, time, total_time;
 
 }
 

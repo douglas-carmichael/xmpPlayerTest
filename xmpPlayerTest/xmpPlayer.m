@@ -287,6 +287,8 @@
             self->pattern = ourFrameInfo.pattern;
             self->row = ourFrameInfo.row;
             self->bpm = ourFrameInfo.bpm;
+            self->time = ourFrameInfo.time;
+            self->total_time = ourFrameInfo.total_time;
             
             // Declare some variables for us to use within the buffer loop
             void *bufferDest;
