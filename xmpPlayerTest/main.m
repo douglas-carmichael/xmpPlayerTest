@@ -13,18 +13,26 @@ int main(int argc, const char * argv[]) {
     @autoreleasepool {
         // insert code here...
         NSLog(@"Hello, World!");
+        NSError *error;
+        
         xmpPlayer *myPlayer;
         myPlayer = [[xmpPlayer alloc] init];
         
         // set up our paths and URLs
-        NSString *modulePath = @"/Users/dcarmich/wild_impressions.mod";
+        NSString *modulePath = @"/Users/dcarmich/jakarta.mod";
         NSURL *moduleURL = [[NSURL alloc] initFileURLWithPath:modulePath];
 
         // load the module
-        [myPlayer loadModule:moduleURL error:nil];
+        [myPlayer loadModule:moduleURL error:&error];
+        if(error)
+        {
+            NSLog(@"Error: %@", error);
+            return 0;
+        }
         
+        error = nil;
         // play it
-        [myPlayer playModule:nil];
+        [myPlayer playModule:&error];
         
     }
     return 0;
