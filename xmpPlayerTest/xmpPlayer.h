@@ -53,6 +53,7 @@
 -(void)stopPlayback;
 -(void)setMasterVolume:(float)volume;
 -(void)setChannelVolume:(int)ourChannel volume:(int)ourVolume;
+-(NSString*)getTimeString:(int)timeValue;
 -(BOOL)isPlaying;
 -(BOOL)isLoaded;
 

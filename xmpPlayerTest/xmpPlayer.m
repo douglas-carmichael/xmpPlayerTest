@@ -202,6 +202,8 @@
     NSNumber *moduleRestartPosition = [NSNumber numberWithInt:pModuleInfo.mod->rst];
     NSNumber *moduleGlobalVolume = [NSNumber numberWithInt:pModuleInfo.mod->gvl];
     
+//    NSLog(@"total duration: %d", pModuleInfo.seq_data[0].duration);
+    
     tempModuleInfo = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                       moduleName, @"moduleName",
                       moduleType, @"moduleType",
@@ -350,6 +352,26 @@
 {
     AudioUnitSetParameter(mixerUnit, kMultiChannelMixerParam_Volume,
                           kAudioUnitScope_Output, 0, volume, 0);
+}
+
+-(NSString*)getTimeString:(int)timeValue
+{
+    int minutes, seconds;
+    
+    if (timeValue == 0)
+    {
+        minutes = 0;
+        seconds = 0;
+        NSString *timeReturn = @"00:00";
+        return timeReturn;
+    }
+    else
+    {
+        minutes = ((timeValue + 500) / 60000);
+        seconds = ((timeValue + 500) / 1000) % 60;
+        NSString *timeReturn = [[NSString alloc] initWithFormat:@"%02d:%d", minutes, seconds];
+        return timeReturn;
+    }
 }
 
 -(BOOL)isPlaying

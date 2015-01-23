@@ -31,6 +31,10 @@ int main(int argc, const char * argv[]) {
         }
         
         error = nil;
+        
+        NSString *testDuration = [myPlayer getTimeString:327680];
+        NSLog(@"Duration test: %@", testDuration);
+        
         // play it
         [myPlayer playModule:&error];
         
