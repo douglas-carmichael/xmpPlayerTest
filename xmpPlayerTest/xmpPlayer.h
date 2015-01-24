@@ -38,8 +38,8 @@
     
 @public
     // Set up some integers for position/pattern/row/bpm
-    int position, pattern, row, bpm, time, total_time;
-
+    int position, pattern, row, bpm, time;
+    
 }
 
 @property (readonly) NSString *xmpVersion;
@@ -51,6 +51,8 @@
 -(void)playModule:(NSError **)error;
 -(void)pauseResume;
 -(void)stopPlayback;
+-(void)nextPosition;
+-(void)prevPosition;
 -(void)setMasterVolume:(float)volume;
 -(void)setChannelVolume:(int)ourChannel volume:(int)ourVolume;
 -(NSString*)getTimeString:(int)timeValue;
