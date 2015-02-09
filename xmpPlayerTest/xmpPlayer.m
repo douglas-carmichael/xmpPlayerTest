@@ -308,6 +308,7 @@
             TPCircularBufferProduce(&ourClassPlayer.ourBuffer, ourFrameInfo.buffer_size);
         } while (xmp_play_frame(class_context) == 0);
     } while(!ourClassPlayer.reached_end);
+    
 }
 
 -(void)pauseResume
@@ -345,6 +346,18 @@
 {
     AudioUnitSetParameter(mixerUnit, kMultiChannelMixerParam_Volume,
                           kAudioUnitScope_Output, 0, volume, 0);
+}
+
+-(void)setPosition:(int)positionValue
+{
+    int status;
+    status = xmp_set_position(class_context, positionValue);
+}
+
+-(void)seekToTime:(int)seekValue
+{
+    int status;
+    status = xmp_seek_time(class_context, seekValue);
 }
 
 -(NSString*)getTimeString:(int)timeValue
