@@ -418,11 +418,12 @@
 
 -(BOOL)isPlaying
 {
+    
+    // FIXME: Does not accurately detect playback state.
     if(xmp_get_player(class_context, XMP_PLAYER_STATE) == XMP_STATE_PLAYING)
     {
         return YES;
     }
-    NSLog(@"Player state false.");
     return NO;
 }
 
