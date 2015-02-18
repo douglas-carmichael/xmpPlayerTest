@@ -39,6 +39,8 @@
         // Set up our default output component
         AudioComponentDescription defaultOutputDescription = {};
         defaultOutputDescription.componentType = kAudioUnitType_Output;
+        
+        // If we're on iOS, use the proper output device subtype
 #if TARGET_OS_IPHONE || TARGET_IPHONE_SIMULATOR
         defaultOutputDescription.componentSubType = kAudioUnitSubType_RemoteIO;
 #elif TARGET_OS_MAC
@@ -206,13 +208,39 @@
     
 }
 
--(void)nextPosition
+
+-(NSInteger)playerPosition;
+{
+    return (NSInteger)position;
+}
+
+-(NSInteger)playerPattern;
+{
+    return (NSInteger)pattern;
+}
+
+-(NSInteger)playerRow;
+{
+    return (NSInteger)row;
+}
+
+-(NSInteger)playerBPM;
+{
+    return (NSInteger)bpm;
+}
+
+-(NSInteger)playerTime;
+{
+    return (NSInteger)time;
+}
+
+-(void)nextPlayPosition
 {
     int status;
     status = xmp_next_position(class_context);
 }
 
--(void)prevPosition
+-(void)prevPlayPosition
 {
     int status;
     status = xmp_prev_position(class_context);
@@ -330,16 +358,16 @@
     }
 }
 
--(void)stopPlayback
+-(void)stopPlayer
 {
-    ourClassPlayer.stopped_flag = true;
     xmp_stop_module(class_context);
+    ourClassPlayer.stopped_flag = true;
 }
 
--(void)setChannelVolume:(int)ourChannel volume:(int)ourVolume
+-(void)setChannelVolume:(NSInteger)ourChannel volume:(NSInteger)ourVolume
 {
     int status;
-    status = xmp_channel_vol(class_context, ourChannel, ourVolume);
+    status = xmp_channel_vol(class_context, (int)ourChannel, (int)ourVolume);
 }
 
 -(void)setMasterVolume:(float)volume
@@ -348,21 +376,21 @@
                           kAudioUnitScope_Output, 0, volume, 0);
 }
 
--(void)setPosition:(int)positionValue
+-(void)setPlayerPosition:(NSInteger)positionValue
 {
     int status;
-    status = xmp_set_position(class_context, positionValue);
+    status = xmp_set_position(class_context, (int)positionValue);
 }
 
--(void)seekToTime:(int)seekValue
+-(void)seekPlayerToTime:(NSInteger)seekValue
 {
     int status;
-    status = xmp_seek_time(class_context, seekValue);
+    status = xmp_seek_time(class_context, (int)seekValue);
 }
 
--(NSString*)getTimeString:(int)timeValue
+-(NSString*)getTimeString:(NSInteger)timeValue
 {
-    int minutes, seconds;
+    NSInteger minutes, seconds;
     
     if (timeValue == 0)
     {
@@ -375,7 +403,15 @@
     {
         minutes = ((timeValue + 500) / 60000);
         seconds = ((timeValue + 500) / 1000) % 60;
+        
+        // If we're on a 64-bit system, NSInteger is a long.
+        // From: http://stackoverflow.com/questions/4445173/when-to-use-nsinteger-vs-int
+        
+#if __LP64__ || TARGET_OS_EMBEDDED || TARGET_OS_IPHONE || TARGET_OS_WIN32 || NS_BUILD_32_LIKE_64
+        NSString *timeReturn = [[NSString alloc] initWithFormat:@"%02ld:%02ld", (long)minutes, (long)seconds];
+#else
         NSString *timeReturn = [[NSString alloc] initWithFormat:@"%02d:%02d", minutes, seconds];
+#endif
         return timeReturn;
     }
 }
@@ -386,6 +422,7 @@
     {
         return YES;
     }
+    NSLog(@"Player state false.");
     return NO;
 }
 
