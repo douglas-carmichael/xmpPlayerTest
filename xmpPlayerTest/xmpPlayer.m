@@ -172,6 +172,25 @@
 -(void)loadModule:(NSURL *)moduleURL error:(NSError *__autoreleasing *)error
 {
     
+    // Test if this file is a valid module.
+    int testValue;
+    testValue = xmp_test_module((char *)[moduleURL.path UTF8String], NULL);
+    if (testValue != 0)
+    {
+        NSString *errorDescription = NSLocalizedString(@"Cannot load module.", @"");
+        NSDictionary *errorInfo = @{NSLocalizedDescriptionKey: errorDescription};
+        NSString *xmpErrorDomain = @"net.dcarmichael.xmpPlayer";
+        *error = [NSError errorWithDomain:xmpErrorDomain code:xmpLoadingError userInfo:errorInfo];
+        return;
+    }
+    
+    // If we're playing, stop playback.
+    if (xmp_get_player(class_context, XMP_STATE_PLAYING) != 0)
+    {
+        xmp_end_player(class_context);
+        ourPlayback = NO;
+    }
+    
     // Load the module
     if (xmp_load_module(class_context, (char *)[moduleURL.path UTF8String]) != 0)
     {
@@ -204,35 +223,16 @@
                     @"moduleGlobalVolume": [NSNumber numberWithInt:pModuleInfo.mod->gvl],
                     @"moduleTotalTime": [NSNumber numberWithInt:pModuleInfo.seq_data[0].duration]};
     
+    // Post our experimental notification
+    NSString *notificationName = @"DCProtoLoadNotification";
+    NSString *notificationKey = _moduleInfo[@"moduleName"];
+    [[NSNotificationCenter defaultCenter]
+     postNotificationName:notificationName object:notificationKey];
+    
     return;
     
 }
 
-
--(NSInteger)playerPosition;
-{
-    return (NSInteger)position;
-}
-
--(NSInteger)playerPattern;
-{
-    return (NSInteger)pattern;
-}
-
--(NSInteger)playerRow;
-{
-    return (NSInteger)row;
-}
-
--(NSInteger)playerBPM;
-{
-    return (NSInteger)bpm;
-}
-
--(NSInteger)playerTime;
-{
-    return (NSInteger)time;
-}
 
 -(void)nextPlayPosition
 {
@@ -307,15 +307,18 @@
                 break;
             
             // Update our position information
-            self->position = ourFrameInfo.pos;
-            self->pattern = ourFrameInfo.pattern;
-            self->row = ourFrameInfo.row;
-            self->bpm = ourFrameInfo.bpm;
-            self->time = ourFrameInfo.time;
+            [self setValue:[NSNumber numberWithInt:ourFrameInfo.pos] forKey:@"playerPosition"];
+            [self setValue:[NSNumber numberWithInt:ourFrameInfo.pattern] forKey:@"playerPattern"];
+            [self setValue:[NSNumber numberWithInt:ourFrameInfo.row] forKey:@"playerRow"];
+            [self setValue:[NSNumber numberWithInt:ourFrameInfo.bpm] forKey:@"playerBPM"];
+            [self setValue:[NSNumber numberWithInt:ourFrameInfo.time] forKey:@"playerTime"];
             
             // Declare some variables for us to use within the buffer loop
             void *bufferDest;
             int bufferAvailable;
+            
+            // Tell everyone else we're not at the end
+            ourPlayback = YES;
             
             // Let's start putting the data out into the buffer
             do {
@@ -337,6 +340,8 @@
         } while (xmp_play_frame(class_context) == 0);
     } while(!ourClassPlayer.reached_end);
     
+    // Tell everyone else we've reached the end
+    ourPlayback = NO;
 }
 
 -(void)pauseResume
@@ -348,14 +353,33 @@
     err = AUGraphIsRunning(myGraph, &isRunning);
     if (isRunning)
     {
+        _isPaused = YES;
         AUGraphStop(myGraph);
         ourClassPlayer.paused_flag = true;
     }
     else
     {
+        _isPaused = NO;
         AUGraphStart(myGraph);
         ourClassPlayer.paused_flag = false;
     }
+}
+
+-(BOOL)isPlaying
+{
+    int err;
+    Boolean isRunning;
+    
+    if (ourPlayback)
+    {
+        err = AUGraphIsRunning(myGraph, &isRunning);
+        if (isRunning)
+        {
+            return YES;
+        }
+        return NO;
+    }
+    return NO;
 }
 
 -(void)stopPlayer
@@ -376,7 +400,7 @@
                           kAudioUnitScope_Output, 0, volume, 0);
 }
 
--(void)setPlayerPosition:(NSInteger)positionValue
+-(void)jumpPosition:(NSInteger)positionValue
 {
     int status;
     status = xmp_set_position(class_context, (int)positionValue);
@@ -388,11 +412,12 @@
     status = xmp_seek_time(class_context, (int)seekValue);
 }
 
--(NSString*)getTimeString:(NSInteger)timeValue
+-(NSString*)getTimeString:(NSNumber*)timeValue
 {
     NSInteger minutes, seconds;
+    int workingTime = [timeValue intValue];
     
-    if (timeValue == 0)
+    if (workingTime == 0)
     {
         minutes = 0;
         seconds = 0;
@@ -401,8 +426,8 @@
     }
     else
     {
-        minutes = ((timeValue + 500) / 60000);
-        seconds = ((timeValue + 500) / 1000) % 60;
+        minutes = ((workingTime + 500) / 60000);
+        seconds = ((workingTime + 500) / 1000) % 60;
         
         // If we're on a 64-bit system, NSInteger is a long.
         // From: http://stackoverflow.com/questions/4445173/when-to-use-nsinteger-vs-int
@@ -416,16 +441,6 @@
     }
 }
 
--(BOOL)isPlaying
-{
-    
-    // FIXME: Does not accurately detect playback state.
-    if(xmp_get_player(class_context, XMP_PLAYER_STATE) == XMP_STATE_PLAYING)
-    {
-        return YES;
-    }
-    return NO;
-}
 
 -(BOOL)isLoaded
 {

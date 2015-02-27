@@ -36,21 +36,19 @@
     // Set up our ASBD for the audio input from libxmp (referenced in playModule)
     AudioStreamBasicDescription streamFormat;
     
-    // Set up some integers for position/pattern/row/bpm
-    // NOTE: These will be exposed publicly by the 'playerXXX' read-only properties
-    int position, pattern, row, bpm, time;
-    
+    BOOL ourPlayback;
 }
 
 @property (readonly) NSString *xmpVersion;
 @property (readonly) NSArray *supportedFormats;
 @property (readonly) NSArray *instrumentNames;
 @property (readonly) NSDictionary *moduleInfo;
-@property (readonly) NSInteger playerPosition;
-@property (readonly) NSInteger playerPattern;
-@property (readonly) NSInteger playerRow;
-@property (readonly) NSInteger playerBPM;
-@property (readonly) NSInteger playerTime;
+@property (readonly) NSNumber* playerPosition;
+@property (readonly) NSNumber* playerPattern;
+@property (readonly) NSNumber* playerRow;
+@property (readonly) NSNumber* playerBPM;
+@property (readonly) NSNumber* playerTime;
+@property (readonly) BOOL isPaused;
 
 -(void)loadModule:(NSURL *)moduleURL error:(NSError *__autoreleasing *)error;
 -(void)playModule:(NSError **)error;
@@ -59,13 +57,13 @@
 -(void)nextPlayPosition;
 -(void)prevPlayPosition;
 
--(void)setPlayerPosition:(NSInteger)positionValue;
+-(void)jumpPosition:(NSInteger)positionValue;
 -(void)seekPlayerToTime:(NSInteger)seekValue;
 -(void)setMasterVolume:(float)volume;
 -(void)setChannelVolume:(NSInteger)ourChannel volume:(NSInteger)ourVolume;
--(NSString*)getTimeString:(NSInteger)timeValue;
--(BOOL)isPlaying;
+-(NSString*)getTimeString:(NSNumber*)timeValue;
 -(BOOL)isLoaded;
+-(BOOL)isPlaying;
 
 OSStatus renderModuleCallback(void *inRefCon, AudioUnitRenderActionFlags *ioActionFlags,
                               const AudioTimeStamp *inTimeStamp,
