@@ -17,14 +17,17 @@
     if (self)
     {
         char **xmp_format_list;
-        int status;
+        int status, formatArrayIndex = 0;
         xmp_format_list = xmp_get_format_list();
         class_context = xmp_create_context();
         _xmpVersion = [NSString stringWithUTF8String:xmp_version];
         NSMutableArray *tempSupportedFormats = [[NSMutableArray alloc] init];
-        for (int i = 0; i <= sizeof(xmp_format_list); i++)
+        
+        while (xmp_format_list[formatArrayIndex] != NULL)
         {
-            [tempSupportedFormats addObject:[NSString stringWithUTF8String:xmp_format_list[i]]];
+            [tempSupportedFormats addObject:[NSString
+                                             stringWithUTF8String:xmp_format_list[formatArrayIndex]]];
+            formatArrayIndex++;
         }
         _supportedFormats = [tempSupportedFormats copy];
         
@@ -222,13 +225,6 @@
                     @"moduleRestartPosition": [NSNumber numberWithInt:pModuleInfo.mod->rst],
                     @"moduleGlobalVolume": [NSNumber numberWithInt:pModuleInfo.mod->gvl],
                     @"moduleTotalTime": [NSNumber numberWithInt:pModuleInfo.seq_data[0].duration]};
-    
-    // Post our experimental notification
-    NSString *notificationName = @"DCProtoLoadNotification";
-    NSString *notificationKey = _moduleInfo[@"moduleName"];
-    [[NSNotificationCenter defaultCenter]
-     postNotificationName:notificationName object:notificationKey];
-    
     return;
     
 }
@@ -373,11 +369,7 @@
     if (ourPlayback)
     {
         err = AUGraphIsRunning(myGraph, &isRunning);
-        if (isRunning)
-        {
-            return YES;
-        }
-        return NO;
+        return isRunning;
     }
     return NO;
 }
