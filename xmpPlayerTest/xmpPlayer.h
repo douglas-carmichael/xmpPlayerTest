@@ -10,6 +10,7 @@
 #import <AudioToolbox/AudioToolbox.h>
 #import "TPCircularBuffer.h"
 #import "xmp.h"
+#import "Module.h"
 
 @interface xmpPlayer : NSObject
 {
@@ -42,15 +43,14 @@
 @property (readonly) NSString *xmpVersion;
 @property (readonly) NSArray *supportedFormats;
 @property (readonly) NSArray *instrumentNames;
-@property (readonly) NSDictionary *moduleInfo;
-@property (readonly) NSNumber* playerPosition;
-@property (readonly) NSNumber* playerPattern;
-@property (readonly) NSNumber* playerRow;
-@property (readonly) NSNumber* playerBPM;
-@property (readonly) NSNumber* playerTime;
+@property (readonly) int playerPosition;
+@property (readonly) int playerPattern;
+@property (readonly) int playerRow;
+@property (readonly) int playerBPM;
+@property (readonly) int playerTime;
 @property (readonly) BOOL isPaused;
 
--(void)loadModule:(NSURL *)moduleURL error:(NSError *__autoreleasing *)error;
+-(void)loadModule:(Module *)ourModule error:(NSError *__autoreleasing *)error;
 -(void)playModule:(NSError **)error;
 -(void)pauseResume;
 -(void)stopPlayer;

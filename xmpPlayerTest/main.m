@@ -16,14 +16,18 @@ int main(int argc, const char * argv[]) {
         NSError *error;
         
         xmpPlayer *myPlayer;
+        Module *ourModule;
+        
         myPlayer = [[xmpPlayer alloc] init];
+        ourModule = [[Module alloc] init];
         
         // set up our paths and URLs
         NSString *modulePath = @"/Users/dcarmich/jakarta.mod";
         NSURL *moduleURL = [[NSURL alloc] initFileURLWithPath:modulePath];
 
         // load the module
-        [myPlayer loadModule:moduleURL error:&error];
+        [ourModule setFilePath:moduleURL];
+        [myPlayer loadModule:ourModule error:&error];
         if(error)
         {
             NSLog(@"Error: %@", error);
@@ -32,6 +36,8 @@ int main(int argc, const char * argv[]) {
         
         error = nil;
         
+        NSLog(@"Module name: %@", ourModule.moduleName);
+        NSLog(@"Module type: %@", ourModule.moduleType);
         
         // play it
         [myPlayer playModule:&error];

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A381AC661AAA331C0089373B /* Module.m in Sources */ = {isa = PBXBuildFile; fileRef = A381AC651AAA331C0089373B /* Module.m */; };
 		A3A473451A6C997E00329868 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = A3A473441A6C997E00329868 /* main.m */; };
 		A3A4734D1A6C998A00329868 /* libxmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A3A4734C1A6C998A00329868 /* libxmp.a */; };
 		A3A473511A6C9A7900329868 /* TPCircularBuffer.c in Sources */ = {isa = PBXBuildFile; fileRef = A3A4734F1A6C9A7900329868 /* TPCircularBuffer.c */; };
@@ -26,6 +27,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A381AC641AAA331C0089373B /* Module.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Module.h; sourceTree = "<group>"; };
+		A381AC651AAA331C0089373B /* Module.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Module.m; sourceTree = "<group>"; };
 		A3A473411A6C997E00329868 /* xmpPlayerTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = xmpPlayerTest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A3A473441A6C997E00329868 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		A3A4734B1A6C998A00329868 /* xmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = xmp.h; sourceTree = "<group>"; };
@@ -49,6 +52,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A381AC671AAA33200089373B /* Module class */ = {
+			isa = PBXGroup;
+			children = (
+				A381AC641AAA331C0089373B /* Module.h */,
+				A381AC651AAA331C0089373B /* Module.m */,
+			);
+			name = "Module class";
+			sourceTree = "<group>";
+		};
 		A3A473381A6C997E00329868 = {
 			isa = PBXGroup;
 			children = (
@@ -100,6 +112,7 @@
 				A3A473531A6C9B5400329868 /* xmpPlayer.h */,
 				A3A473541A6C9B5400329868 /* xmpPlayer.m */,
 				A3A473571A6CA03A00329868 /* xmpPlayerErrors.h */,
+				A381AC671AAA33200089373B /* Module class */,
 			);
 			name = xmpPlayer;
 			sourceTree = "<group>";
@@ -161,6 +174,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A3A473511A6C9A7900329868 /* TPCircularBuffer.c in Sources */,
+				A381AC661AAA331C0089373B /* Module.m in Sources */,
 				A3A473551A6C9B5400329868 /* xmpPlayer.m in Sources */,
 				A3A473451A6C997E00329868 /* main.m in Sources */,
 			);
@@ -284,6 +298,7 @@
 				A3A4734A1A6C997E00329868 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

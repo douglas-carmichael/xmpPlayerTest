@@ -172,12 +172,12 @@
     DisposeAUGraph(myGraph);
 }
 
--(void)loadModule:(NSURL *)moduleURL error:(NSError *__autoreleasing *)error
+-(void)loadModule:(Module *)ourModule error:(NSError *__autoreleasing *)error
 {
     
     // Test if this file is a valid module.
     int testValue;
-    testValue = xmp_test_module((char *)[moduleURL.path UTF8String], NULL);
+    testValue = xmp_test_module((char *)[[ourModule filePath].path UTF8String], NULL);
     if (testValue != 0)
     {
         NSString *errorDescription = NSLocalizedString(@"Cannot load module.", @"");
@@ -195,7 +195,7 @@
     }
     
     // Load the module
-    if (xmp_load_module(class_context, (char *)[moduleURL.path UTF8String]) != 0)
+    if (xmp_load_module(class_context, (char *)[[ourModule filePath].path UTF8String]) != 0)
     {
         if (error != NULL)
         {
@@ -212,19 +212,20 @@
     struct xmp_module_info pModuleInfo;
     xmp_get_module_info(class_context, &pModuleInfo);
     
-    _moduleInfo = @{@"moduleName": [NSString stringWithUTF8String:pModuleInfo.mod->name],
-                    @"moduleType": [NSString stringWithUTF8String:pModuleInfo.mod->type],
-                    @"moduleNumPatterns": [NSNumber numberWithInt:pModuleInfo.mod->pat],
-                    @"moduleNumTracks": [NSNumber numberWithInt:pModuleInfo.mod->trk],
-                    @"moduleTracksPerPattern": [NSNumber numberWithInt:pModuleInfo.mod->chn],
-                    @"moduleInstruments": [NSNumber numberWithInt:pModuleInfo.mod->ins],
-                    @"moduleSamples": [NSNumber numberWithInt:pModuleInfo.mod->smp],
-                    @"moduleInitSpeed": [NSNumber numberWithInt:pModuleInfo.mod->spd],
-                    @"moduleInitBPM": [NSNumber numberWithInt:pModuleInfo.mod->bpm],
-                    @"moduleLength": [NSNumber numberWithInt:pModuleInfo.mod->len],
-                    @"moduleRestartPosition": [NSNumber numberWithInt:pModuleInfo.mod->rst],
-                    @"moduleGlobalVolume": [NSNumber numberWithInt:pModuleInfo.mod->gvl],
-                    @"moduleTotalTime": [NSNumber numberWithInt:pModuleInfo.seq_data[0].duration]};
+    ourModule.moduleName = [NSString stringWithUTF8String:pModuleInfo.mod->name];
+    ourModule.moduleType = [NSString stringWithUTF8String:pModuleInfo.mod->type];
+    ourModule.numPatterns = pModuleInfo.mod->pat;
+    ourModule.numTracks = pModuleInfo.mod->trk;
+    ourModule.numChannels = pModuleInfo.mod->chn;
+    ourModule.numInstruments = pModuleInfo.mod->ins;
+    ourModule.numSamples = pModuleInfo.mod->smp;
+    ourModule.initSpeed = pModuleInfo.mod->spd;
+    ourModule.initBPM = pModuleInfo.mod->bpm;
+    ourModule.modLength = pModuleInfo.mod->len;
+    ourModule.modRestartPos = pModuleInfo.mod->rst;
+    ourModule.modGlobalVolume = pModuleInfo.mod->gvl;
+    ourModule.modTotalTime = pModuleInfo.seq_data[0].duration;
+    
     return;
     
 }
@@ -303,11 +304,10 @@
                 break;
             
             // Update our position information
-            [self setValue:[NSNumber numberWithInt:ourFrameInfo.pos] forKey:@"playerPosition"];
-            [self setValue:[NSNumber numberWithInt:ourFrameInfo.pattern] forKey:@"playerPattern"];
-            [self setValue:[NSNumber numberWithInt:ourFrameInfo.row] forKey:@"playerRow"];
-            [self setValue:[NSNumber numberWithInt:ourFrameInfo.bpm] forKey:@"playerBPM"];
-            [self setValue:[NSNumber numberWithInt:ourFrameInfo.time] forKey:@"playerTime"];
+            _playerPosition = ourFrameInfo.pos;
+            _playerPattern = ourFrameInfo.pattern;
+            _playerRow = ourFrameInfo.row;
+            _playerBPM = ourFrameInfo.bpm;
             
             // Declare some variables for us to use within the buffer loop
             void *bufferDest;
