@@ -308,6 +308,7 @@
             _playerPattern = ourFrameInfo.pattern;
             _playerRow = ourFrameInfo.row;
             _playerBPM = ourFrameInfo.bpm;
+            _playerTime = ourFrameInfo.time;
             
             // Declare some variables for us to use within the buffer loop
             void *bufferDest;
@@ -404,12 +405,11 @@
     status = xmp_seek_time(class_context, (int)seekValue);
 }
 
--(NSString*)getTimeString:(NSNumber*)timeValue
+-(NSString*)getTimeString:(int)timeValue
 {
     NSInteger minutes, seconds;
-    int workingTime = [timeValue intValue];
     
-    if (workingTime == 0)
+    if (timeValue == 0)
     {
         minutes = 0;
         seconds = 0;
@@ -418,8 +418,8 @@
     }
     else
     {
-        minutes = ((workingTime + 500) / 60000);
-        seconds = ((workingTime + 500) / 1000) % 60;
+        minutes = ((timeValue + 500) / 60000);
+        seconds = ((timeValue + 500) / 1000) % 60;
         
         // If we're on a 64-bit system, NSInteger is a long.
         // From: http://stackoverflow.com/questions/4445173/when-to-use-nsinteger-vs-int

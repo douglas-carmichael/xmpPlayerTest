@@ -61,7 +61,7 @@
 -(void)seekPlayerToTime:(NSInteger)seekValue;
 -(void)setMasterVolume:(float)volume;
 -(void)setChannelVolume:(NSInteger)ourChannel volume:(NSInteger)ourVolume;
--(NSString*)getTimeString:(NSNumber*)timeValue;
+-(NSString*)getTimeString:(int)timeValue;
 -(BOOL)isLoaded;
 -(BOOL)isPlaying;
 
